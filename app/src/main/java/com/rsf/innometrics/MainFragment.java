@@ -10,11 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -22,7 +18,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -62,51 +57,18 @@ public class MainFragment extends Fragment {
         recView.scrollToPosition(0);
         recView.setAdapter(viewAdapter);
         mOpenUsageSettingButton = rootView.findViewById(R.id.button_open_usage_setting);
-        Spinner mSpinner = rootView.findViewById(R.id.spinner_time_span);
-        SpinnerAdapter spinnerAdapter = ArrayAdapter.createFromResource(Objects.requireNonNull(getActivity()),
-                R.array.action_list, android.R.layout.simple_spinner_dropdown_item);
-        mSpinner.setAdapter(spinnerAdapter);
-        mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
-            String[] strings = getResources().getStringArray(R.array.action_list);
-
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                StatsUsageInterval statsUsageInterval = StatsUsageInterval
-                        .getValue(strings[position]);
-                if (statsUsageInterval != null) {
-                    List<UsageStats> usageStatsList =
-                            getUsageStatistics(statsUsageInterval.mInterval);
-                    Collections.sort(usageStatsList, new LastTimeLaunchedComparatorDesc());
-                    updateAppsList(usageStatsList);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
+        List<UsageStats> usageStatsList = getUsageStatistics();
+        Collections.sort(usageStatsList, new LastTimeLaunchedComparatorDesc());
+        updateAppsList(Collections.singletonList(usageStatsList.get(0)));
     }
 
-    /**
-     * Returns the {@link #recView} including the time span specified by the
-     * intervalType argument.
-     *
-     * @param intervalType The time interval by which the stats are aggregated.
-     *                     Corresponding to the value of {@link UsageStatsManager}.
-     *                     E.g. {@link UsageStatsManager#INTERVAL_DAILY}, {@link
-     *                     UsageStatsManager#INTERVAL_WEEKLY},
-     * @return A list of {@link android.app.usage.UsageStats}.
-     */
-    private List<UsageStats> getUsageStatistics(int intervalType) {
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.YEAR, -1);
+    private List<UsageStats> getUsageStatistics() {
+        long time = System.currentTimeMillis();
+        List<UsageStats> appList = manager.queryUsageStats(
+                UsageStatsManager.INTERVAL_DAILY, time - 10000 * 10000, time);
 
-        List<UsageStats> queryUsageStats = manager
-                .queryUsageStats(intervalType, cal.getTimeInMillis(),
-                        System.currentTimeMillis());
-
-        if (queryUsageStats.size() == 0) {
+        if (appList != null && appList.size() == 0) {
             Log.i("TAG", "The user may not allow the access to apps usage. ");
             Toast.makeText(getActivity(),
                     getString(R.string.explanation_access_to_appusage_is_not_enabled),
@@ -119,15 +81,9 @@ public class MainFragment extends Fragment {
                 }
             });
         }
-        return queryUsageStats;
+        return appList;
     }
 
-    /**
-     * Updates the {@link #recView} with the list of {@link UsageStats} passed as an argument.
-     *
-     * @param usageStatsList A list of {@link UsageStats} from which update the
-     *                       {@link #recView}.
-     */
     private void updateAppsList(List<UsageStats> usageStatsList) {
         List<MappingApp> mappingAppList = new ArrayList<>();
         for (int i = 0; i < usageStatsList.size(); i++) {
@@ -149,10 +105,6 @@ public class MainFragment extends Fragment {
         recView.scrollToPosition(0);
     }
 
-    /**
-     * The {@link Comparator} to sort a collection of {@link UsageStats} sorted by the timestamp
-     * last time the app was used in the descendant order.
-     */
     private static class LastTimeLaunchedComparatorDesc implements Comparator<UsageStats> {
 
         @Override
@@ -161,27 +113,4 @@ public class MainFragment extends Fragment {
         }
     }
 
-    enum StatsUsageInterval {
-        DAILY("Daily", UsageStatsManager.INTERVAL_DAILY),
-        WEEKLY("Weekly", UsageStatsManager.INTERVAL_WEEKLY),
-        MONTHLY("Monthly", UsageStatsManager.INTERVAL_MONTHLY),
-        YEARLY("Yearly", UsageStatsManager.INTERVAL_YEARLY);
-
-        private int mInterval;
-        private String mStringRepresentation;
-
-        StatsUsageInterval(String stringRepresentation, int interval) {
-            mStringRepresentation = stringRepresentation;
-            mInterval = interval;
-        }
-
-        static StatsUsageInterval getValue(String stringRepresentation) {
-            for (StatsUsageInterval statsUsageInterval : values()) {
-                if (statsUsageInterval.mStringRepresentation.equals(stringRepresentation)) {
-                    return statsUsageInterval;
-                }
-            }
-            return null;
-        }
-    }
 }
