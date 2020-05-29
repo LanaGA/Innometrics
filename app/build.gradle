@@ -1,4 +1,7 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 28
@@ -25,13 +28,18 @@ android {
 
 
 dependencies {
-    implementation "com.android.support:support-v4:27.1.1"
-    implementation "com.android.support:support-v13:27.1.1"
-    implementation "com.android.support:cardview-v7:27.1.1"
-    implementation "com.android.support:appcompat-v7:27.1.1"
-    implementation 'com.android.support:recyclerview-v7:27.1.1'
-    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation "com.android.support:support-v4:28.1.1"
+    implementation "com.android.support:support-v13:28.1.1"
+    implementation "com.android.support:cardview-v7:28.1.1"
+    implementation "com.android.support:appcompat-v7:28.1.1"
+    implementation 'com.android.support:recyclerview-v7:28.1.1'
+    implementation 'com.android.support:appcompat-v7:28.1.1'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'junit:junit:4.12'
+    implementation "androidx.core:core-ktx:+"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.0.0"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
-
+repositories {
+    mavenCentral()
+}
