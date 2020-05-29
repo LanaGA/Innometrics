@@ -15,9 +15,10 @@
  */
 
 package com.rsf.innometrics.di
-
 import android.app.Application
-//import androidx.room.Room
+import androidx.room.Room
+import com.rsf.innometrics.db.AppDb
+import com.rsf.innometrics.db.StatsDao
 import dagger.Module
 import dagger.Provides
 //import retrofit2.Retrofit
@@ -37,24 +38,18 @@ class AppModule {
 //            .create(GithubService::class.java)
 //    }
 //
-//    @Singleton
-//    @Provides
-//    fun provideDb(app: Application): GithubDb {
-//        return Room
-//            .databaseBuilder(app, GithubDb::class.java, "github.db")
-//            .fallbackToDestructiveMigration()
-//            .build()
-//    }
-//
-//    @Singleton
-//    @Provides
-//    fun provideUserDao(db: GithubDb): UserDao {
-//        return db.userDao()
-//    }
-//
-//    @Singleton
-//    @Provides
-//    fun provideRepoDao(db: GithubDb): RepoDao {
-//        return db.repoDao()
-//    }
+    @Singleton
+    @Provides
+    fun provideDb(app: Application): AppDb {
+        return Room
+            .databaseBuilder(app, AppDb::class.java, "innometrics.db")
+            .fallbackToDestructiveMigration()
+            .build()
+    }
+
+    @Singleton
+    @Provides
+    fun provideStatsDao(db: AppDb): StatsDao {
+        return db.statsDao()
+    }
 }

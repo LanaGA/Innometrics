@@ -71,7 +71,7 @@ class MainFragment : Fragment() {
         }
 
     private fun updateAppsList(usageStatsList: List<UsageStats>) {
-        val mappingAppList: MutableList<MappingApp> = ArrayList()
+        val statsList: MutableList<Stats> = ArrayList()
         for (i in usageStatsList.indices) {
             val stats = usageStatsList[i]
             val activity = activity ?: return
@@ -82,11 +82,11 @@ class MainFragment : Fragment() {
                         stats.packageName))
                 activity.getDrawable(R.drawable.ic_android_black_24dp)
             }
-            val mappingApp = MappingApp(stats, icon)
-            mappingAppList.add(mappingApp)
+            val mappingApp = Stats(stats, icon)
+            statsList.add(mappingApp)
         }
         viewAdapter.run {
-            setCustomUsageStatsList(mappingAppList)
+            setCustomUsageStatsList(statsList)
             notifyDataSetChanged()
         }
         recyclerview_app_usage.scrollToPosition(0)

@@ -14,31 +14,17 @@
  * limitations under the License.
  */
 
-package com.rsf.innometrics.di
+package com.rsf.innometrics.vo
 
-import android.app.Application
-import com.rsf.innometrics.InnometricsApp
-import dagger.BindsInstance
-import dagger.Component
-import dagger.android.AndroidInjectionModule
-import javax.inject.Singleton
-
-@Singleton
-@Component(
-    modules = [
-        AndroidInjectionModule::class,
-        AppModule::class
-       // MainActivityModule::class
-    ]
-)
-interface AppComponent {
-    @Component.Builder
-    interface Builder {
-        @BindsInstance
-        fun application(application: Application): Builder
-
-        fun build(): AppComponent
-    }
-
-    fun inject(app: InnometricsApp)
+/**
+ * Status of a resource that is provided to the UI.
+ *
+ *
+ * These are usually created by the Repository classes where they return
+ * `LiveData<Resource<T>>` to pass back the latest data to the UI with its fetch status.
+ */
+enum class Status {
+    SUCCESS,
+    ERROR,
+    LOADING
 }

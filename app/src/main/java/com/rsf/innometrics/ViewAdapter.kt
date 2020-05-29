@@ -10,7 +10,7 @@ import java.text.DateFormat
 import java.util.*
 
 class ViewAdapter internal constructor() : RecyclerView.Adapter<ViewAdapter.ViewHolder>() {
-    private var mMappingAppList: List<MappingApp> = ArrayList()
+    private var mStatsList: List<Stats> = ArrayList()
     private val mDateFormat = DateFormat.getDateTimeInstance()
 
     class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
@@ -26,17 +26,17 @@ class ViewAdapter internal constructor() : RecyclerView.Adapter<ViewAdapter.View
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-        val (usageStats, appIcon) = mMappingAppList[position]
+        val (usageStats, appIcon) = mStatsList[position]
         viewHolder.packageName.text = usageStats.packageName
         viewHolder.lastTimeUsed.text = usageStats.lastTimeUsed.let { mDateFormat.format(Date(it)) }
         viewHolder.appIcon.setImageDrawable(appIcon)
     }
 
     override fun getItemCount(): Int {
-        return mMappingAppList.size
+        return mStatsList.size
     }
 
-    fun setCustomUsageStatsList(customUsageStats: List<MappingApp>) {
-        mMappingAppList = customUsageStats
+    fun setCustomUsageStatsList(customUsageStats: List<Stats>) {
+        mStatsList = customUsageStats
     }
 }
