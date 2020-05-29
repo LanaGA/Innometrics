@@ -2,6 +2,7 @@ package com.rsf.innometrics;
 
 import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -39,7 +40,7 @@ public class MainFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         manager = (UsageStatsManager) Objects.requireNonNull(getActivity())
-                .getSystemService("usagestats");
+                .getSystemService(Context.USAGE_STATS_SERVICE);
     }
 
     @Override
