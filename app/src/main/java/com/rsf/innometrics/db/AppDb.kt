@@ -1,7 +1,7 @@
 package com.rsf.innometrics.db
 
 import androidx.room.Database
-import com.rsf.innometrics.Stats
+import com.rsf.innometrics.AppStats
 import androidx.room.RoomDatabase
 
 /**
@@ -9,7 +9,7 @@ import androidx.room.RoomDatabase
  */
 @Database(
     entities = [
-        Stats::class
+        AppStats::class
         ],
     version = 3,
     exportSchema = false

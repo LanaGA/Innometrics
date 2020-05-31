@@ -13,17 +13,22 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import com.rsf.innometrics.db.StatsDao
 import kotlinx.android.synthetic.main.fragment_app_usage_statistics.*
 import java.util.*
+import javax.inject.Inject
 
 class MainFragment : Fragment() {
     private var manager: UsageStatsManager? = null
     private val viewAdapter: ViewAdapter = ViewAdapter()
 
-    override fun onAttach(context: Context?) {
+    @Inject
+    lateinit var statsDao: StatsDao
+
+    override fun onAttach(context: Context) {
         super.onAttach(context)
 
-        manager = context?.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
+        manager = context.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
     }
 
     override fun onDetach() {
@@ -44,9 +49,15 @@ class MainFragment : Fragment() {
             scrollToPosition(0)
             adapter = viewAdapter
         }
+        update()
+    }
+
+    private fun update() {
         val usageStatsList = usageStatistics
         Collections.sort(usageStatsList, LastTimeLaunchedComparatorDesc())
-        updateAppsList(listOf(usageStatsList!![0]))
+        if (usageStatsList != null) {
+            updateAppsList(usageStatsList)
+        }
     }
 
     private val usageStatistics: List<UsageStats>?
@@ -71,10 +82,23 @@ class MainFragment : Fragment() {
         }
 
     private fun updateAppsList(usageStatsList: List<UsageStats>) {
-        val statsList: MutableList<Stats> = ArrayList()
+        val appStatsList: MutableList<AppStats> = ArrayList()
         for (i in usageStatsList.indices) {
             val stats = usageStatsList[i]
             val activity = activity ?: return
+
+            val totalTimeUsed = stats.totalTimeInForeground
+            if(totalTimeUsed == 0L)
+                continue
+
+            val name = try {
+                activity.packageManager.getApplicationLabel(
+                        activity.packageManager.getApplicationInfo(
+                                stats.packageName, PackageManager.GET_META_DATA))
+            } catch (e: PackageManager.NameNotFoundException) {
+                Log.w("TAG", String.format("App Name is not found for %s",
+                        stats.packageName))
+            }
             val icon = try {
                 activity.packageManager.getApplicationIcon(stats.packageName)
             } catch (e: PackageManager.NameNotFoundException) {
@@ -82,11 +106,11 @@ class MainFragment : Fragment() {
                         stats.packageName))
                 activity.getDrawable(R.drawable.ic_android_black_24dp)
             }
-            val mappingApp = Stats(stats, icon)
-            statsList.add(mappingApp)
+            appStatsList.add(AppStats(name.toString(), icon, totalTimeUsed))
+            //statsDao.insert(Stats(0, name.toString(), lastTime    Used, null))
         }
         viewAdapter.run {
-            setCustomUsageStatsList(statsList)
+            setCustomUsageStatsList(appStatsList)
             notifyDataSetChanged()
         }
         recyclerview_app_usage.scrollToPosition(0)

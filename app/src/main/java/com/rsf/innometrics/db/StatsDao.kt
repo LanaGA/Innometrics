@@ -5,14 +5,16 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.rsf.innometrics.Stats
-import com.rsf.innometrics.User
+import com.rsf.innometrics.vo.Stats
 
 /**
  * Interface for database access for Statistics related operations.
  */
 @Dao
 interface StatsDao {
-    //load stats
-    //download stats
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insert(stats: Stats)
+
+    @Query("SELECT * FROM stats WHERE app_name = :app_name")
+    fun findByLogin(app_name: String): LiveData<Stats>
 }

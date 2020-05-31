@@ -1,14 +1,18 @@
 package com.rsf.innometrics.vo
 
 import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
-@Entity(primaryKeys = ["app_name"])
+@Entity
 data class Stats(
-    @field:SerializedName("app_name")
-    val app_name: String,
-    @field:SerializedName("time_begin")
-    val time_begin: String,
-    @field:SerializedName("time_end")
-    val time_end: String
+        @PrimaryKey(autoGenerate = true)
+        @field:SerializedName("id")
+        val id: Int,
+        @field:SerializedName("app_name")
+        val app_name: String,
+        @field:SerializedName("time_begin")
+        val time_begin: Long,
+        @field:SerializedName("time_end")
+        val time_end: Long?
 )
