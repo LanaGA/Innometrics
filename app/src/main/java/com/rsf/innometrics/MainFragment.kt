@@ -14,11 +14,14 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.rsf.innometrics.db.StatsDao
+import com.rsf.innometrics.vo.Stats
+import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_app_usage_statistics.*
 import java.util.*
 import javax.inject.Inject
 
 class MainFragment : Fragment() {
+
     private var manager: UsageStatsManager? = null
     private val viewAdapter: ViewAdapter = ViewAdapter()
 
@@ -27,7 +30,7 @@ class MainFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-
+        AndroidSupportInjection.inject(this)
         manager = context.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
     }
 
@@ -107,7 +110,7 @@ class MainFragment : Fragment() {
                 activity.getDrawable(R.drawable.ic_android_black_24dp)
             }
             appStatsList.add(AppStats(name.toString(), icon, totalTimeUsed))
-            //statsDao.insert(Stats(0, name.toString(), lastTime    Used, null))
+            statsDao.insert(Stats(0, name.toString(), totalTimeUsed, null))
         }
         viewAdapter.run {
             setCustomUsageStatsList(appStatsList)
