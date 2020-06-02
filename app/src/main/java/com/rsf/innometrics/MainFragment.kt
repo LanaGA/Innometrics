@@ -4,20 +4,17 @@ import android.app.usage.UsageStats
 import android.app.usage.UsageStatsManager
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.provider.Settings
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import com.rsf.innometrics.db.StatsDao
-import com.rsf.innometrics.vo.Stats
-import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_app_usage_statistics.*
-import java.util.*
+import timber.log.Timber
 import javax.inject.Inject
 
 class MainFragment : Fragment() {
@@ -27,16 +24,23 @@ class MainFragment : Fragment() {
 
     @Inject
     lateinit var statsDao: StatsDao
+    private lateinit var viewModel: MainViewModel
+
+    companion object {
+        fun newInstance(): MainFragment {
+            return MainFragment()
+        }
+    }
+
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        AndroidSupportInjection.inject(this)
+        //AndroidSupportInjection.inject(this)
         manager = context.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
     }
 
     override fun onDetach() {
         super.onDetach()
-
         manager = null
     }
 
@@ -48,6 +52,7 @@ class MainFragment : Fragment() {
     override fun onViewCreated(rootView: View, savedInstanceState: Bundle?) {
         super.onViewCreated(rootView, savedInstanceState)
 
+        viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
         recyclerview_app_usage.run {
             scrollToPosition(0)
             adapter = viewAdapter
@@ -56,11 +61,7 @@ class MainFragment : Fragment() {
     }
 
     private fun update() {
-        val usageStatsList = usageStatistics
-        Collections.sort(usageStatsList, LastTimeLaunchedComparatorDesc())
-        if (usageStatsList != null) {
-            updateAppsList(usageStatsList)
-        }
+        updateAppsList(usageStatistics)
     }
 
     private val usageStatistics: List<UsageStats>?
@@ -70,7 +71,7 @@ class MainFragment : Fragment() {
                     .queryUsageStats(
                             UsageStatsManager.INTERVAL_DAILY, time - 10000 * 10000, time)
             if (appList != null && appList.size == 0) {
-                Log.i("TAG", "The user may not allow the access to apps usage. ")
+                Timber.e("The user may not allow the access to apps usage. ")
                 Toast.makeText(activity,
                         getString(R.string.explanation_access_to_appusage_is_not_enabled),
                         Toast.LENGTH_LONG).show()
@@ -84,50 +85,16 @@ class MainFragment : Fragment() {
             return appList
         }
 
-    private fun updateAppsList(usageStatsList: List<UsageStats>) {
-        val appStatsList: MutableList<AppStats> = ArrayList()
-        for (i in usageStatsList.indices) {
-            val stats = usageStatsList[i]
-            val activity = activity ?: return
+    private fun updateAppsList(usageStatsList: List<UsageStats>?) {
 
-            val totalTimeUsed = stats.totalTimeInForeground
-            if(totalTimeUsed == 0L)
-                continue
-
-            val name = try {
-                activity.packageManager.getApplicationLabel(
-                        activity.packageManager.getApplicationInfo(
-                                stats.packageName, PackageManager.GET_META_DATA))
-            } catch (e: PackageManager.NameNotFoundException) {
-                Log.w("TAG", String.format("App Name is not found for %s",
-                        stats.packageName))
-            }
-            val icon = try {
-                activity.packageManager.getApplicationIcon(stats.packageName)
-            } catch (e: PackageManager.NameNotFoundException) {
-                Log.w("TAG", String.format("App Icon is not found for %s",
-                        stats.packageName))
-                activity.getDrawable(R.drawable.ic_android_black_24dp)
-            }
-            appStatsList.add(AppStats(name.toString(), icon, totalTimeUsed))
-            statsDao.insert(Stats(0, name.toString(), totalTimeUsed, null))
-        }
+        val appStatsList = viewModel.update(requireContext(), usageStatsList, activity!!)
         viewAdapter.run {
-            setCustomUsageStatsList(appStatsList)
+            if (appStatsList != null) {
+                setCustomUsageStatsList(appStatsList)
+            }
             notifyDataSetChanged()
         }
         recyclerview_app_usage.scrollToPosition(0)
     }
 
-    private class LastTimeLaunchedComparatorDesc : Comparator<UsageStats> {
-        override fun compare(left: UsageStats, right: UsageStats): Int {
-            return right.lastTimeUsed.compareTo(left.lastTimeUsed)
-        }
-    }
-
-    companion object {
-        fun newInstance(): MainFragment {
-            return MainFragment()
-        }
-    }
 }

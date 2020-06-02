@@ -12,7 +12,7 @@ import com.rsf.innometrics.vo.Stats
  */
 @Dao
 interface StatsDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACEw
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(stats: Stats)
 
     @Query("SELECT * FROM stats WHERE app_name = :app_name")
