@@ -16,6 +16,7 @@ import com.rsf.innometrics.db.StatsDao
 import kotlinx.android.synthetic.main.fragment_app_usage_statistics.*
 import timber.log.Timber
 import javax.inject.Inject
+import javax.inject.Singleton
 
 class MainFragment : Fragment() {
 
@@ -24,7 +25,8 @@ class MainFragment : Fragment() {
 
     @Inject
     lateinit var statsDao: StatsDao
-    private lateinit var viewModel: MainViewModel
+    @Singleton
+    lateinit var viewModel: MainViewModel
 
     companion object {
         fun newInstance(): MainFragment {

@@ -15,6 +15,7 @@
  */
 
 package com.rsf.innometrics.di
+
 import android.app.Application
 import androidx.room.Room
 import com.rsf.innometrics.db.AppDb
@@ -27,7 +28,7 @@ import javax.inject.Singleton
 
 @Module(includes = [ViewModelModule::class])
 class AppModule {
-//    @Singleton
+    //    @Singleton
 //    @Provides
 //    fun provideGithubService(): GithubService {
 //        return Retrofit.Builder()
@@ -42,9 +43,10 @@ class AppModule {
     @Provides
     fun provideDb(app: Application): AppDb {
         return Room
-            .databaseBuilder(app, AppDb::class.java, "innometrics.db")
-            .fallbackToDestructiveMigration()
-            .build()
+                .databaseBuilder(app, AppDb::class.java, "innometrics.db")
+                // .fallbackToDestructiveMigration()
+                .allowMainThreadQueries()
+                .build()
     }
 
     @Singleton

@@ -7,16 +7,17 @@ import android.content.pm.PackageManager
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
 import com.rsf.innometrics.db.StatsDao
+import com.rsf.innometrics.vo.Stats
 import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
 
-class MainViewModel : ViewModel() {
-    private var manager: UsageStatsManager? = null
-    private val viewAdapter: ViewAdapter = ViewAdapter()
+class MainViewModel @Inject constructor(statsDao: StatsDao) : ViewModel() {
+    var manager: UsageStatsManager? = null
+    val viewAdapter: ViewAdapter = ViewAdapter()
 
     @Inject
-    lateinit var statsDao: StatsDao
+    var statsDao = statsDao
 
     internal fun update(context: Context, usageStatsList: List<UsageStats>?, activity: FragmentActivity): List<AppStats>? {
         manager = context.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
@@ -53,9 +54,8 @@ class MainViewModel : ViewModel() {
                 activity.getDrawable(R.drawable.ic_android_black_24dp)
             }
             appStatsList.add(AppStats(name.toString(), icon, totalTimeUsed))
-
+            statsDao.insert(Stats(0, name.toString(), totalTimeUsed, null))
         }
-
         return appStatsList
         //how put it to local db?
     }
