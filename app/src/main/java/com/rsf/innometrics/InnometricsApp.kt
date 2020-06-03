@@ -20,6 +20,7 @@ import javax.inject.Inject
 class InnometricsApp : Application(), HasActivityInjector{
     @Inject
     lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Activity>
+    //private val localDataSource = UserLocalDataSource()
 
     override fun onCreate() {
         super.onCreate()
