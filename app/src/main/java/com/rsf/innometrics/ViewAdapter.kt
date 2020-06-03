@@ -15,7 +15,7 @@ class ViewAdapter internal constructor() : RecyclerView.Adapter<ViewAdapter.View
 
     class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
         val appName: TextView = v.findViewById(R.id.textview_app_name)
-        val lastTimeUsed: TextView = v.findViewById(R.id.textview_last_time_used)
+        val lastTimeUsed: TextView = v.findViewById(R.id.textview_total_time_used)
         val appIcon: ImageView = v.findViewById(R.id.app_icon)
     }
 

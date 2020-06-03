@@ -20,13 +20,18 @@ import kotlinx.android.synthetic.main.fragment_app_usage_statistics.*
 import java.util.*
 import javax.inject.Inject
 
-class MainFragment : Fragment() {
+class MainFragment @Inject constructor(var db: AppDb) : Fragment() {
 
     private var manager: UsageStatsManager? = null
     private val viewAdapter: ViewAdapter = ViewAdapter()
+    lateinit var viewModel: MainViewModel
 
-    @Inject
-    lateinit var statsDao: StatsDao
+    companion object {
+        fun newInstance(db: AppDb): MainFragment {
+            return MainFragment(db)
+        }
+    }
+
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -48,6 +53,7 @@ class MainFragment : Fragment() {
     override fun onViewCreated(rootView: View, savedInstanceState: Bundle?) {
         super.onViewCreated(rootView, savedInstanceState)
 
+        //viewModel = MainViewModel by lazy { ViewModelProviders.of(this).get(MainViewModel::class.java) }
         recyclerview_app_usage.run {
             scrollToPosition(0)
             adapter = viewAdapter
