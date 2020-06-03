@@ -11,26 +11,21 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
-import com.rsf.innometrics.db.StatsDao
+import com.rsf.innometrics.db.AppDb
 import kotlinx.android.synthetic.main.fragment_app_usage_statistics.*
 import timber.log.Timber
 import javax.inject.Inject
-import javax.inject.Singleton
+import com.rsf.innometrics.MainViewModel as MainViewModel
 
-class MainFragment : Fragment() {
+class MainFragment @Inject constructor(var db: AppDb) : Fragment() {
 
     private var manager: UsageStatsManager? = null
     private val viewAdapter: ViewAdapter = ViewAdapter()
-
-    @Inject
-    lateinit var statsDao: StatsDao
-    @Singleton
     lateinit var viewModel: MainViewModel
 
     companion object {
-        fun newInstance(): MainFragment {
-            return MainFragment()
+        fun newInstance(db: AppDb): MainFragment {
+            return MainFragment(db)
         }
     }
 
@@ -54,7 +49,7 @@ class MainFragment : Fragment() {
     override fun onViewCreated(rootView: View, savedInstanceState: Bundle?) {
         super.onViewCreated(rootView, savedInstanceState)
 
-        viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
+        //viewModel = MainViewModel by lazy { ViewModelProviders.of(this).get(MainViewModel::class.java) }
         recyclerview_app_usage.run {
             scrollToPosition(0)
             adapter = viewAdapter
@@ -89,7 +84,8 @@ class MainFragment : Fragment() {
 
     private fun updateAppsList(usageStatsList: List<UsageStats>?) {
 
-        val appStatsList = viewModel.update(requireContext(), usageStatsList, activity!!)
+        viewModel = MainViewModel(db)
+        val appStatsList = viewModel.update(usageStatsList, requireActivity())
         viewAdapter.run {
             if (appStatsList != null) {
                 setCustomUsageStatsList(appStatsList)
