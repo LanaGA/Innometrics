@@ -38,7 +38,7 @@ class MainViewModel @Inject constructor(var db: AppDb) : ViewModel() {
                 continue
             }
             db.statsDao()
-                    .insert(Stats(0, name.toString(), totalTimeUsed))
+                    .insert(Stats(name.toString(), totalTimeUsed))
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe()
