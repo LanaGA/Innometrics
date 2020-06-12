@@ -7,7 +7,11 @@ import com.rsf.innometrics.vo.Stats
 /**
  * Main database description.
  */
-@Database(entities = [Stats::class], version = 1)
+@Database(
+        entities = [Stats::class],
+        version = 3,
+        exportSchema = false
+)
 public abstract class AppDb : RoomDatabase() {
     abstract fun statsDao(): StatsDao
 }

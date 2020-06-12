@@ -11,8 +11,8 @@ data class Stats(
         val id: Int,
         @field:SerializedName("app_name")
         val app_name: String,
-        @field:SerializedName("time_begin")
-        val time_begin: Long,
-        @field:SerializedName("time_end")
-        val time_end: Long?
+        @field:SerializedName("time_total")
+        val time_total: Long
+        /*@field:SerializedName("time_end")
+        val time_end: Long?*/
 )

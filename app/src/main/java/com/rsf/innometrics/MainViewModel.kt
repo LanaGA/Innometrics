@@ -3,6 +3,8 @@ package com.rsf.innometrics
 import android.app.usage.UsageStats
 import android.content.pm.PackageManager
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import com.rsf.innometrics.db.AppDb
 import com.rsf.innometrics.vo.Stats
@@ -16,16 +18,16 @@ import kotlin.collections.ArrayList
 class MainViewModel @Inject constructor(var db: AppDb) : ViewModel() {
 
 
-    internal fun update(usageStatsList: List<UsageStats>?, activity: FragmentActivity): List<AppStats>? {
-        Collections.sort(usageStatsList, LastTimeLaunchedComparatorDesc())
+    internal fun update(usageStatsList: List<UsageStats>?, activity: FragmentActivity) {
         if (usageStatsList != null) {
-            return updateAppsList(usageStatsList, activity)
+            Collections.sort(usageStatsList, LastTimeLaunchedComparatorDesc())
+            updateAppsList(usageStatsList, activity)
         }
-        return null
+
     }
 
-    private fun updateAppsList(usageStatsList: List<UsageStats>, activity: FragmentActivity): List<AppStats> {
-        val appStatsList: MutableList<AppStats> = ArrayList()
+
+    private fun updateAppsList(usageStatsList: List<UsageStats>, activity: FragmentActivity) {
         for (i in usageStatsList.indices) {
             val stats = usageStatsList[i]
 
@@ -40,21 +42,18 @@ class MainViewModel @Inject constructor(var db: AppDb) : ViewModel() {
             } catch (e: PackageManager.NameNotFoundException) {
                 continue
             }
-            val icon = try {
+          /*  val icon = try {
                 activity.packageManager.getApplicationIcon(stats.packageName)
             } catch (e: PackageManager.NameNotFoundException) {
                 activity.getDrawable(
                         R.drawable.ic_android_black_24dp)
-            }
-            appStatsList.add(AppStats(name.toString(), icon, totalTimeUsed))
+            }*/
             db.statsDao()
-                    .insert(Stats(0, name.toString(), totalTimeUsed, null))
+                    .insert(Stats(0, name.toString(), totalTimeUsed))
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe()
         }
-        return appStatsList
-        //how put it to local db?
     }
 
     private class LastTimeLaunchedComparatorDesc : Comparator<UsageStats> {

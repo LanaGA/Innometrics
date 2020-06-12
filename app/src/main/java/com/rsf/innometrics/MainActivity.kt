@@ -11,7 +11,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_app_usage_statistics)
 
-        val db: AppDb = Room.databaseBuilder(applicationContext, AppDb::class.java, "innometrics").build()
+        val db: AppDb = Room.databaseBuilder(applicationContext, AppDb::class.java, "innometrics")
+                .fallbackToDestructiveMigration()
+                .build()
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
                     .add(R.id.container, MainFragment.newInstance(db))

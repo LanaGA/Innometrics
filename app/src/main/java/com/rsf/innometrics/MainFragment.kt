@@ -11,7 +11,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.*
 import com.rsf.innometrics.db.AppDb
+import com.rsf.innometrics.vo.Stats
 import kotlinx.android.synthetic.main.fragment_app_usage_statistics.*
 import timber.log.Timber
 import javax.inject.Inject
@@ -29,10 +31,8 @@ class MainFragment @Inject constructor(var db: AppDb) : Fragment() {
         }
     }
 
-
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        //AndroidSupportInjection.inject(this)
         manager = context.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
     }
 
@@ -48,18 +48,15 @@ class MainFragment @Inject constructor(var db: AppDb) : Fragment() {
 
     override fun onViewCreated(rootView: View, savedInstanceState: Bundle?) {
         super.onViewCreated(rootView, savedInstanceState)
-
-        //viewModel = MainViewModel by lazy { ViewModelProviders.of(this).get(MainViewModel::class.java) }
         recyclerview_app_usage.run {
             scrollToPosition(0)
             adapter = viewAdapter
         }
-        update()
+
+        val usage = usageStatistics
+            updateAppsList(usage)
     }
 
-    private fun update() {
-        updateAppsList(usageStatistics)
-    }
 
     private val usageStatistics: List<UsageStats>?
         get() {
@@ -67,7 +64,7 @@ class MainFragment @Inject constructor(var db: AppDb) : Fragment() {
             val appList = (manager ?: return null)
                     .queryUsageStats(
                             UsageStatsManager.INTERVAL_DAILY, time - 10000 * 10000, time)
-            if (appList != null && appList.size == 0) {
+            if (appList == null || appList.size == 0) {
                 Timber.e("The user may not allow the access to apps usage. ")
                 Toast.makeText(activity,
                         getString(R.string.explanation_access_to_appusage_is_not_enabled),
@@ -76,23 +73,27 @@ class MainFragment @Inject constructor(var db: AppDb) : Fragment() {
                     visibility = View.VISIBLE
                     setOnClickListener {
                         startActivity(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS))
+                        usageStatistics
                     }
                 }
             }
+
             return appList
         }
 
     private fun updateAppsList(usageStatsList: List<UsageStats>?) {
-
+        val statsList: MutableList<Stats> = ArrayList()
         viewModel = MainViewModel(db)
-        val appStatsList = viewModel.update(usageStatsList, requireActivity())
+        viewModel.update(usageStatsList, requireActivity())
+        val appStatsList = db.statsDao().getAll()
+
+        appStatsList.observe(viewLifecycleOwner, Observer { it ->
+            statsList.addAll(listOf(it!!))
+        })
         viewAdapter.run {
-            if (appStatsList != null) {
-                setCustomUsageStatsList(appStatsList)
-            }
+            setCustomUsageStatsList(statsList)
             notifyDataSetChanged()
         }
         recyclerview_app_usage.scrollToPosition(0)
     }
-
 }

@@ -17,6 +17,6 @@ interface StatsDao {
     fun insert(stats: Stats): Completable
 
 
-    @Query("SELECT * FROM stats WHERE app_name = :app_name")
-    fun findByLogin(app_name: String): LiveData<Stats>
+    @Query("SELECT * FROM stats")
+    fun getAll(): LiveData<Stats>
 }
