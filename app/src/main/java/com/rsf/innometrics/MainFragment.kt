@@ -35,11 +35,6 @@ class MainFragment @Inject constructor(var db: AppDb) : Fragment() {
         manager = context.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
     }
 
-    override fun onDetach() {
-        super.onDetach()
-        manager = null
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_app_usage_statistics, container, false)
@@ -77,21 +72,13 @@ class MainFragment @Inject constructor(var db: AppDb) : Fragment() {
         }
 
     private fun updateAppsList(usageStatsList: List<UsageStats>?) {
-        val statsList: MutableList<Stats> = ArrayList()
         viewModel = MainViewModel(db)
         viewModel.update(usageStatsList, requireActivity())
         db.statsDao()
                 .getAll()
-                .run {
-                    observe(viewLifecycleOwner, Observer
-                    { it ->
-                        statsList.addAll(it)
-                    })
-                }
-        viewAdapter.run {
-            setCustomUsageStatsList(statsList)
-            notifyDataSetChanged()
-        }
+                .observe(viewLifecycleOwner, Observer {
+                    viewAdapter.updateStatsList(it)
+                })
         recyclerview_app_usage.scrollToPosition(0)
     }
 }

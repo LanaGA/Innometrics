@@ -14,7 +14,7 @@ import java.text.DateFormat
 import java.util.*
 
 class ViewAdapter internal constructor() : RecyclerView.Adapter<ViewAdapter.ViewHolder>() {
-    private lateinit var mAppStatsList: List<Stats>
+    private var mAppStatsList: List<Stats> = emptyList()
 
     class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
         val appName: TextView = v.findViewById(R.id.textview_app_name)
@@ -42,7 +42,8 @@ class ViewAdapter internal constructor() : RecyclerView.Adapter<ViewAdapter.View
         return mAppStatsList.size
     }
 
-    fun setCustomUsageStatsList(customUsageStats: List<Stats>) {
+    fun updateStatsList(customUsageStats: List<Stats>) {
         mAppStatsList = customUsageStats
+        notifyDataSetChanged()
     }
 }
