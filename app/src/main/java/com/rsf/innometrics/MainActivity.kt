@@ -11,7 +11,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_app_usage_statistics)
 
-        val db: AppDb = Room.databaseBuilder(applicationContext, AppDb::class.java, "innometrics")
+        val db: AppDb = Room.databaseBuilder(applicationContext, AppDb::class.java, "stats")
                 .fallbackToDestructiveMigration()
                 .build()
         if (savedInstanceState == null) {

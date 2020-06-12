@@ -16,7 +16,7 @@ interface StatsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(stats: Stats): Completable
 
+    @Query("SELECT * FROM Stats")
+    fun getAll(): LiveData<List<Stats>>
 
-    @Query("SELECT * FROM stats")
-    fun getAll(): LiveData<Stats>
 }

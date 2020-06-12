@@ -15,7 +15,6 @@ import java.util.*
 
 class ViewAdapter internal constructor() : RecyclerView.Adapter<ViewAdapter.ViewHolder>() {
     private lateinit var mAppStatsList: List<Stats>
-    private val mDateFormat = DateFormat.getDateTimeInstance()
 
     class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
         val appName: TextView = v.findViewById(R.id.textview_app_name)
@@ -30,7 +29,7 @@ class ViewAdapter internal constructor() : RecyclerView.Adapter<ViewAdapter.View
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-        val (id, name, time) = mAppStatsList[position]
+        val (_, name, time) = mAppStatsList[position]
         viewHolder.appName.text = name
         val seconds = (time / 1000).toInt() % 60
         val minutes = (time / (1000 * 60)).toInt() % 60

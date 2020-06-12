@@ -15,7 +15,6 @@ import androidx.lifecycle.*
 import com.rsf.innometrics.db.AppDb
 import com.rsf.innometrics.vo.Stats
 import kotlinx.android.synthetic.main.fragment_app_usage_statistics.*
-import timber.log.Timber
 import javax.inject.Inject
 import com.rsf.innometrics.MainViewModel as MainViewModel
 
@@ -52,9 +51,7 @@ class MainFragment @Inject constructor(var db: AppDb) : Fragment() {
             scrollToPosition(0)
             adapter = viewAdapter
         }
-
-        val usage = usageStatistics
-            updateAppsList(usage)
+        updateAppsList(usageStatistics)
     }
 
 
@@ -65,7 +62,6 @@ class MainFragment @Inject constructor(var db: AppDb) : Fragment() {
                     .queryUsageStats(
                             UsageStatsManager.INTERVAL_DAILY, time - 10000 * 10000, time)
             if (appList == null || appList.size == 0) {
-                Timber.e("The user may not allow the access to apps usage. ")
                 Toast.makeText(activity,
                         getString(R.string.explanation_access_to_appusage_is_not_enabled),
                         Toast.LENGTH_LONG).show()
@@ -73,7 +69,6 @@ class MainFragment @Inject constructor(var db: AppDb) : Fragment() {
                     visibility = View.VISIBLE
                     setOnClickListener {
                         startActivity(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS))
-                        usageStatistics
                     }
                 }
             }
@@ -85,11 +80,14 @@ class MainFragment @Inject constructor(var db: AppDb) : Fragment() {
         val statsList: MutableList<Stats> = ArrayList()
         viewModel = MainViewModel(db)
         viewModel.update(usageStatsList, requireActivity())
-        val appStatsList = db.statsDao().getAll()
-
-        appStatsList.observe(viewLifecycleOwner, Observer { it ->
-            statsList.addAll(listOf(it!!))
-        })
+        db.statsDao()
+                .getAll()
+                .run {
+                    observe(viewLifecycleOwner, Observer
+                    { it ->
+                        statsList.addAll(it)
+                    })
+                }
         viewAdapter.run {
             setCustomUsageStatsList(statsList)
             notifyDataSetChanged()

@@ -3,8 +3,6 @@ package com.rsf.innometrics
 import android.app.usage.UsageStats
 import android.content.pm.PackageManager
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import com.rsf.innometrics.db.AppDb
 import com.rsf.innometrics.vo.Stats
@@ -12,8 +10,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.util.*
 import javax.inject.Inject
-import kotlin.Comparator
-import kotlin.collections.ArrayList
 
 class MainViewModel @Inject constructor(var db: AppDb) : ViewModel() {
 
@@ -23,7 +19,6 @@ class MainViewModel @Inject constructor(var db: AppDb) : ViewModel() {
             Collections.sort(usageStatsList, LastTimeLaunchedComparatorDesc())
             updateAppsList(usageStatsList, activity)
         }
-
     }
 
 
@@ -42,12 +37,6 @@ class MainViewModel @Inject constructor(var db: AppDb) : ViewModel() {
             } catch (e: PackageManager.NameNotFoundException) {
                 continue
             }
-          /*  val icon = try {
-                activity.packageManager.getApplicationIcon(stats.packageName)
-            } catch (e: PackageManager.NameNotFoundException) {
-                activity.getDrawable(
-                        R.drawable.ic_android_black_24dp)
-            }*/
             db.statsDao()
                     .insert(Stats(0, name.toString(), totalTimeUsed))
                     .subscribeOn(Schedulers.io())
