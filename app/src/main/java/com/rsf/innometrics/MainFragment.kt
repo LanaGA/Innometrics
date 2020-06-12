@@ -77,7 +77,7 @@ class MainFragment @Inject constructor(var db: AppDb) : Fragment() {
         db.statsDao()
                 .getAll()
                 .observe(viewLifecycleOwner, Observer {
-                    viewAdapter.updateStatsList(it)
+                    viewAdapter.updateStatsList(it, requireActivity())
                 })
         recyclerview_app_usage.scrollToPosition(0)
     }

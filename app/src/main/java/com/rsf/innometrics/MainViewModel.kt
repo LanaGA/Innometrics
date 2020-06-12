@@ -31,9 +31,7 @@ class MainViewModel @Inject constructor(var db: AppDb) : ViewModel() {
                 continue
 
             val name = try {
-                activity.packageManager.getApplicationLabel(
-                        activity.packageManager.getApplicationInfo(
-                                stats.packageName, PackageManager.GET_META_DATA))
+                stats.packageName
             } catch (e: PackageManager.NameNotFoundException) {
                 continue
             }
