@@ -18,8 +18,8 @@ package com.rsf.innometrics.di
 
 import android.app.Application
 import androidx.room.Room
-import com.rsf.innometrics.db.AppDb
-import com.rsf.innometrics.db.StatsDao
+import com.rsf.innometrics.data.db.AppDb
+import com.rsf.innometrics.data.db.StatsDao
 import dagger.Module
 import dagger.Provides
 //import retrofit2.Retrofit

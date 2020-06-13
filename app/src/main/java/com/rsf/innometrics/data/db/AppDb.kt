@@ -1,4 +1,4 @@
-package com.rsf.innometrics.db
+package com.rsf.innometrics.data.db
 
 import androidx.room.Database
 import androidx.room.RoomDatabase

@@ -3,7 +3,7 @@ package com.rsf.innometrics
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.room.Room
-import com.rsf.innometrics.db.AppDb
+import com.rsf.innometrics.data.db.AppDb
 
 
 class MainActivity : AppCompatActivity() {

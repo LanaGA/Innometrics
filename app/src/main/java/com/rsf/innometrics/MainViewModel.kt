@@ -4,7 +4,7 @@ import android.app.usage.UsageStats
 import android.content.pm.PackageManager
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
-import com.rsf.innometrics.db.AppDb
+import com.rsf.innometrics.data.db.AppDb
 import com.rsf.innometrics.vo.Stats
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -14,15 +14,15 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(var db: AppDb) : ViewModel() {
 
 
-    internal fun update(usageStatsList: List<UsageStats>?, activity: FragmentActivity) {
+    internal fun update(usageStatsList: List<UsageStats>?) {
         if (usageStatsList != null) {
             Collections.sort(usageStatsList, LastTimeLaunchedComparatorDesc())
-            updateAppsList(usageStatsList, activity)
+            updateAppsList(usageStatsList)
         }
     }
 
 
-    private fun updateAppsList(usageStatsList: List<UsageStats>, activity: FragmentActivity) {
+    private fun updateAppsList(usageStatsList: List<UsageStats>) {
         for (i in usageStatsList.indices) {
             val stats = usageStatsList[i]
 

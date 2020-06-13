@@ -12,8 +12,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.*
-import com.rsf.innometrics.db.AppDb
-import com.rsf.innometrics.vo.Stats
+import com.rsf.innometrics.data.db.AppDb
 import kotlinx.android.synthetic.main.fragment_app_usage_statistics.*
 import javax.inject.Inject
 import com.rsf.innometrics.MainViewModel as MainViewModel
@@ -73,7 +72,7 @@ class MainFragment @Inject constructor(var db: AppDb) : Fragment() {
 
     private fun updateAppsList(usageStatsList: List<UsageStats>?) {
         viewModel = MainViewModel(db)
-        viewModel.update(usageStatsList, requireActivity())
+        viewModel.update(usageStatsList)
         db.statsDao()
                 .getAll()
                 .observe(viewLifecycleOwner, Observer {

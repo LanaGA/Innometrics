@@ -1,4 +1,4 @@
-package com.rsf.innometrics.db
+package com.rsf.innometrics.data.db
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
