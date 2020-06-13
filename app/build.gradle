@@ -25,11 +25,11 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField 'String', 'BASE_URL', '\"http://3.249.147.66:3000/api/\"'
+            buildConfigField 'String', 'BASE_URL', '\"https://innometric.guru:9091\"'
         }
 
         debug {
-            buildConfigField 'String', 'BASE_URL', '\"http://3.249.147.66:3000/api/\"'
+            buildConfigField 'String', 'BASE_URL', '\"https://innometric.guru:9091\"'
         }
     }
 

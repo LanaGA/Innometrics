@@ -86,6 +86,6 @@ class SignInFragment : Fragment() {
         )
 
 
-    private fun jsonLogin(username: String, password: String) =
-        createJsonRequestBody("username" to username, "password" to password)
+    private fun jsonLogin(email: String, password: String) =
+        createJsonRequestBody("email" to email, "password" to password, "projectID" to "")
 }

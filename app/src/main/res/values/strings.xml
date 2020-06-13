@@ -2,11 +2,10 @@
     <string name="app_name">Innometrics</string>
     <string name="sign_in">Sign In</string>
     <string name="sign_up">Sign Up</string>
-    <string name="choose_your_login">Choose your login</string>
     <string name="enter_your_email">Enter your email</string>
     <string name="choose_your_password">Choose your password</string>
     <string name="repeat_your_password">Repeat your password</string>
-    <string name="enter_your_login">Enter your login</string>
+    <string name="enter_your_login">Enter your email</string>
     <string name="enter_your_password">Enter your password</string>
     <string name="open_app_usage_setting">Open Apps with usage access settings</string>
     <string name="send_setting">Send</string>

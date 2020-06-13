@@ -14,11 +14,11 @@ class MainLoginActivity : AppCompatActivity(), LoginCommunacator {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_login)
 
-        val loginFragment = LoginActivity()
-        loginFragment.communicate = this
+        /*val loginFragment = LoginActivity()
+        loginFragment.communicate = this*/
 
         supportFragmentManager.beginTransaction()
-            .add(R.id.fragmentContainer, loginFragment)
+            .add(R.id.fragmentContainer, SignInFragment())
             .addToBackStack(null)
             .commit()
     }
