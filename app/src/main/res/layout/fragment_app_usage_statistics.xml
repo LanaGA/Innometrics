@@ -18,14 +18,19 @@
 
 
     <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerview_app_usage"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:scrollbars="vertical"
-            android:drawSelectorOnTop="true"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layoutManager="LinearLayoutManager"
-            />
+        android:id="@+id/recyclerview_app_usage"
+        android:layout_width="match_parent"
+        android:layout_height="611dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:drawSelectorOnTop="true"
+        android:scrollbars="vertical"
+        app:layoutManager="LinearLayoutManager" />
+
+    <Button
+        android:id="@+id/button_send_setting"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/send_setting" />
 
 </LinearLayout>
