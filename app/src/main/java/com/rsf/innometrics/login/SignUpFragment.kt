@@ -1,5 +1,5 @@
 package com.rsf.innometrics.login
-
+/*
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -93,3 +93,4 @@ class SignUpFragment : Fragment() {
     private fun jsonLogin(email: String, password: String) =
             createJsonRequestBody("email" to email, "password" to password)
 }
+*/

@@ -9,6 +9,7 @@
     <string name="enter_your_password">Enter your password</string>
     <string name="open_app_usage_setting">Open Apps with usage access settings</string>
     <string name="send_setting">Send</string>
+    <string name="store_email"> </string>
     <string name="total_time_used">"Total time used: "</string>
     <string name="time_span">"Time span: "</string>
     <string name="explanation_access_to_appusage_is_not_enabled">Failed to retrieve app usage

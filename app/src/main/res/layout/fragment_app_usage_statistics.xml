@@ -9,13 +9,16 @@
     android:orientation="vertical"
     android:padding="16dp">
 
+
     <Button
         android:id="@+id/button_open_usage_setting"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:text="@string/open_app_usage_setting"
-        android:visibility="gone" />
-
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerview_app_usage"
