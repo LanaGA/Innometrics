@@ -34,4 +34,12 @@
     </string>
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
     <string name="login">Login</string>
+    <string name="data_collection_interval_minutes">Data collection interval (minutes)</string>
+    <string name="last_sent_information">Last sent information</string>
+    <string name="sending_statistics_interval_minutes">Sending statistics interval(minutes)</string>
+    <string name="save">Save</string>
+    <string name="default_value_collecting">1</string>
+    <string name="default_value_sending">1</string>
+    <string name="user_information">User information</string>
+    <string name="date">1.1.2020</string>
 </resources>
