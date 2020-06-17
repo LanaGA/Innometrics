@@ -12,8 +12,26 @@
     <string name="store_email"> </string>
     <string name="total_time_used">"Total time used: "</string>
     <string name="time_span">"Time span: "</string>
+    <string name="settings">Settings</string>
     <string name="explanation_access_to_appusage_is_not_enabled">Failed to retrieve app usage
         statistics. You may need to enable access
         for this app through Settings > Security > Apps with usage access
     </string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!-- Preference Titles -->
+    <string name="messages_header">User account</string>
+    <string name="sync_header">Data submission</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Name Surname</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <string name="login">Login</string>
 </resources>
