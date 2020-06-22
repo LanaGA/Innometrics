@@ -2,7 +2,8 @@ package com.rsf.innometrics
 
 import android.app.usage.UsageStats
 import android.content.pm.PackageManager
-import androidx.fragment.app.FragmentActivity
+import android.util.Log
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import com.rsf.innometrics.data.db.AppDb
 import com.rsf.innometrics.vo.Stats
@@ -11,36 +12,49 @@ import io.reactivex.schedulers.Schedulers
 import java.util.*
 import javax.inject.Inject
 
-class MainViewModel @Inject constructor(var db: AppDb) : ViewModel() {
+class MainViewModel @Inject constructor(val view: LifecycleOwner, var db: AppDb) : ViewModel() {
 
 
     internal fun update(usageStatsList: List<UsageStats>?) {
         if (usageStatsList != null) {
             Collections.sort(usageStatsList, LastTimeLaunchedComparatorDesc())
-            updateAppsList(usageStatsList)
+            updateAppsList(usageStatsList[0])
         }
     }
 
 
-    private fun updateAppsList(usageStatsList: List<UsageStats>) {
-        for (i in usageStatsList.indices) {
-            val stats = usageStatsList[i]
+    private fun updateAppsList(stats: UsageStats) {
+        db.statsDao()
+                .getLast()
+                .observe(view, androidx.lifecycle.Observer {
+                    insertOrUpdate(it, stats)
+                })
+    }
 
-            val totalTimeUsed = stats.totalTimeInForeground
-            if (totalTimeUsed == 0L)
-                continue
+    private fun insertOrUpdate(last: Stats?, stats: UsageStats) {
+        val lastTimeUsed = stats.lastTimeUsed
+        if (lastTimeUsed == 0L)
+            return
 
-            val name = try {
-                stats.packageName
-            } catch (e: PackageManager.NameNotFoundException) {
-                continue
-            }
+        val name = try {
+            stats.packageName
+        } catch (e: PackageManager.NameNotFoundException) {
+            return
+        }
+
+        if (last== null || last.app_name != name.toString())
             db.statsDao()
-                    .insert(Stats(name.toString(), totalTimeUsed))
+                    .insert(Stats(0, name.toString(), lastTimeUsed, lastTimeUsed))
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe()
-        }
+        else
+            db.statsDao()
+                    .insert(Stats(last.id, name.toString(), last.time_begin, lastTimeUsed))
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe()
+
     }
 
     private class LastTimeLaunchedComparatorDesc : Comparator<UsageStats> {

@@ -31,7 +31,8 @@ class ViewAdapter internal constructor() : RecyclerView.Adapter<ViewAdapter.View
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-        val (name, time) = mAppStatsList[position]
+        val (_, name, time_begin, time_end) = mAppStatsList[position]
+        val time = (time_end?.minus(time_begin) ?: 0) + 1
         val seconds = (time / 1000).toInt() % 60
         val minutes = (time / (1000 * 60)).toInt() % 60
         val hours = (time / (1000 * 60 * 60)).toInt() % 24

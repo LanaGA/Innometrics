@@ -1,14 +1,15 @@
 package com.rsf.innometrics
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.SearchView
 import androidx.room.Room
 import com.rsf.innometrics.data.db.AppDb
-import androidx.appcompat.widget.Toolbar
-import kotlinx.android.synthetic.main.activity_app_usage_statistics.*
+import javax.inject.Singleton
 
 
 class MainActivity : AppCompatActivity() {

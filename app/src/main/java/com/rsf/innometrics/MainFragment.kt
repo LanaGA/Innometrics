@@ -1,47 +1,39 @@
 package com.rsf.innometrics
 
-import android.Manifest
-import android.annotation.SuppressLint
-import android.app.usage.UsageStats
 import android.app.usage.UsageStatsManager
-import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.MacAddress
 import android.net.wifi.WifiInfo
 import android.net.wifi.WifiManager
 import android.os.Build
 import android.os.Bundle
+import android.os.StrictMode
 import android.provider.Settings
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import com.rsf.innometrics.data.RegistrationResponse
 import com.rsf.innometrics.data.RestClient
 import com.rsf.innometrics.data.db.AppDb
 import com.rsf.innometrics.vo.Stats
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_app_usage_statistics.*
-import kotlinx.android.synthetic.main.fragment_app_usage_statistics.button_send_setting
-import kotlinx.android.synthetic.main.fragment_app_usage_statistics.view.*
 import kotlinx.android.synthetic.main.sign_in_fragment.*
 import okhttp3.RequestBody
 import org.json.JSONObject
 import org.koin.android.ext.android.inject
 import retrofit2.Call
 import retrofit2.Callback
-import timber.log.Timber
 import java.net.InetAddress
-import javax.inject.Inject
+import javax.inject.Singleton
 
 
-class MainFragment @Inject constructor(var db: AppDb) : Fragment() {
+class MainFragment @Singleton constructor(var db: AppDb) : Fragment() {
 
     private val restClient: RestClient by inject()
     private var manager: UsageStatsManager? = null
@@ -60,7 +52,7 @@ class MainFragment @Inject constructor(var db: AppDb) : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         manager = context.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
-        //inet()
+        inet()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -74,13 +66,22 @@ class MainFragment @Inject constructor(var db: AppDb) : Fragment() {
             scrollToPosition(0)
             adapter = viewAdapter
         }
-        updateAppsList(usageStatistics)
+        usageStatistics()
+        updateView()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        updateView()
     }
 
     override fun onStart() {
         super.onStart()
         button_send_setting.setOnClickListener {
-            val credentials = jsonStats(db.statsDao().getAll())
+            inet()
+            val credentials = (db.statsDao().getAll().observe(viewLifecycleOwner, Observer {
+                jsonStats(it)
+            }))
             restClient
                     .getApiService(requireActivity().applicationContext)
                     .addReport(credentials)
@@ -104,19 +105,14 @@ class MainFragment @Inject constructor(var db: AppDb) : Fragment() {
                                 }
                             }
                     )
+            db.statsDao()
+                    .erase()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe()
         }
+
     }
-
-
-    private fun setupPermissions() {
-        val permission = ContextCompat.checkSelfPermission(requireContext(),
-                Manifest.permission.READ_CONTACTS)
-
-        if (permission != PackageManager.PERMISSION_GRANTED) {
-            Timber.e("Permission denied")
-        }
-    }
-
 
     private fun createJsonRequestBody(vararg params: Pair<String, String>) =
             RequestBody.create(
@@ -125,70 +121,64 @@ class MainFragment @Inject constructor(var db: AppDb) : Fragment() {
             )
 
 
-    private fun jsonStats(all: LiveData<List<Stats>>) {
-        all.observe(viewLifecycleOwner, Observer { it ->
-            it.forEach { current ->
-                createJsonRequestBody(
-                        "activityID" to "0",
-                        "activityType" to "Android",
-                        "browser_title" to "",
-                        "browser_url" to "",
-                        "end_time" to "2020-06-13T18:24:16.146Z", //suffer
-                        "executable_name" to current.app_name,
-                        "idle_activity" to "false", // true for waiting
-                        "ip_address" to ip,
-                        "mac_address" to mac!!,
-                        "osversion" to osVersion.toString(),
-                        "pid" to "string",  //wtf?!
-                        "start_time" to "2020-06-13T18:24:16.146Z", //suffer
-                        "userID" to login.text.toString())
-            }
-        })
+    private fun jsonStats(all: List<Stats>) {
+        all.forEach { current ->
+            createJsonRequestBody(
+                    "activityID" to "0",
+                    "activityType" to "Android",
+                    "browser_title" to "",
+                    "browser_url" to "",
+                    "end_time" to current.time_end.toString(), //suffer
+                    "executable_name" to current.app_name,
+                    "idle_activity" to "false",
+                    "ip_address" to ip,
+                    "mac_address" to mac!!,
+                    "osversion" to osVersion.toString(),
+                    "pid" to "string",  //
+                    "start_time" to current.time_begin.toString(), //suffer
+                    "userID" to login.text.toString())
+        }
     }
 
 
     private fun inet() {
-        try {
-            val address: InetAddress = InetAddress.getLocalHost()
-            ip = address.hostAddress
-            mac = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
-                val wifiManager: WifiManager = requireContext().applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
-                val wInfo: WifiInfo = wifiManager.connectionInfo
-                wInfo.macAddress.toString()
-            } else {
-                MacAddress.BROADCAST_ADDRESS.toString()
-            }
-        } catch (e: Exception) {
-            startActivity(Intent(Settings.ACTION_NETWORK_OPERATOR_SETTINGS))
+        val policy: StrictMode.ThreadPolicy = StrictMode.ThreadPolicy.Builder()
+                .permitAll().build()
+        StrictMode.setThreadPolicy(policy)
+        val address: InetAddress = InetAddress.getLocalHost()
+        ip = address.hostAddress
+        mac = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
+            val wifiManager: WifiManager = requireContext().applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+            val wInfo: WifiInfo = wifiManager.connectionInfo
+            wInfo.macAddress.toString()
+        } else {
+            MacAddress.BROADCAST_ADDRESS.toString()
         }
     }
 
-    private val usageStatistics: List<UsageStats>?
-        get() {
 
-            val time = System.currentTimeMillis()
-            val appList = (manager ?: return null)
-                    .queryUsageStats(
-                            UsageStatsManager.INTERVAL_DAILY, time - 10000 * 10000, time)
-            if (appList == null || appList.size == 0) {
-                Toast.makeText(activity,
-                        getString(R.string.explanation_access_to_appusage_is_not_enabled),
-                        Toast.LENGTH_LONG).show()
-                button_send_setting.run { visibility = View.GONE}
-                button_open_usage_setting.run {
-                    visibility = View.VISIBLE
-                    setOnClickListener {
-                        startActivity(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS))
-                    }
+    fun usageStatistics() {
+        val time = System.currentTimeMillis()
+        val appList = manager
+                ?.queryUsageStats(
+                        UsageStatsManager.INTERVAL_DAILY, time - 10000 * 10000, time)
+        if (appList == null || appList.size == 0) {
+            Toast.makeText(activity,
+                    getString(R.string.explanation_access_to_appusage_is_not_enabled),
+                    Toast.LENGTH_LONG).show()
+            button_send_setting.run { visibility = View.GONE }
+            button_open_usage_setting.run {
+                visibility = View.VISIBLE
+                setOnClickListener {
+                    startActivity(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS))
                 }
             }
-
-            return appList
         }
+        viewModel = MainViewModel(viewLifecycleOwner, db)
+        viewModel.update(appList)
+    }
 
-    private fun updateAppsList(usageStatsList: List<UsageStats>?) {
-        viewModel = MainViewModel(db)
-        viewModel.update(usageStatsList)
+    private fun updateView() {
         db.statsDao()
                 .getAll()
                 .observe(viewLifecycleOwner, Observer {
