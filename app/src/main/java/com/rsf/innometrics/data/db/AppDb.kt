@@ -9,7 +9,7 @@ import com.rsf.innometrics.vo.Stats
  */
 @Database(
         entities = [Stats::class],
-        version = 6,
+        version = 7,
         exportSchema = false
 )
 public abstract class AppDb : RoomDatabase() {

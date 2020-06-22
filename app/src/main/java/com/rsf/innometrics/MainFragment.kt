@@ -23,7 +23,6 @@ import com.rsf.innometrics.vo.Stats
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_app_usage_statistics.*
-import kotlinx.android.synthetic.main.sign_in_fragment.*
 import okhttp3.RequestBody
 import org.json.JSONObject
 import org.koin.android.ext.android.inject
@@ -78,40 +77,44 @@ class MainFragment @Singleton constructor(var db: AppDb) : Fragment() {
     override fun onStart() {
         super.onStart()
         button_send_setting.setOnClickListener {
-            inet()
-            val credentials = (db.statsDao().getAll().observe(viewLifecycleOwner, Observer {
-                jsonStats(it)
-            }))
-            restClient
-                    .getApiService(requireActivity().applicationContext)
-                    .addReport(credentials)
-                    .enqueue(
-                            object : Callback<RegistrationResponse> {
-                                override fun onFailure(call: Call<RegistrationResponse>, t: Throwable) {
-                                    Toast.makeText(
-                                            activity,
-                                            "Error while sending statistics", Toast.LENGTH_LONG
-                                    ).show()
-                                }
-
-                                override fun onResponse(
-                                        call: Call<RegistrationResponse>,
-                                        response: retrofit2.Response<RegistrationResponse>
-                                ) {
-                                    Toast.makeText(
-                                            activity,
-                                            response.message(), Toast.LENGTH_LONG
-                                    ).show()
-                                }
-                            }
-                    )
-            db.statsDao()
-                    .erase()
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe()
+           sendingProccess()
         }
 
+    }
+
+    fun sendingProccess(){
+        inet()
+        val credentials = (db.statsDao().getAll().observe(viewLifecycleOwner, Observer {
+            jsonStats(it)
+        }))
+        restClient
+                .getApiService(requireActivity().applicationContext)
+                .addReport(credentials)
+                .enqueue(
+                        object : Callback<RegistrationResponse> {
+                            override fun onFailure(call: Call<RegistrationResponse>, t: Throwable) {
+                                Toast.makeText(
+                                        activity,
+                                        "Error while sending statistics", Toast.LENGTH_LONG
+                                ).show()
+                            }
+
+                            override fun onResponse(
+                                    call: Call<RegistrationResponse>,
+                                    response: retrofit2.Response<RegistrationResponse>
+                            ) {
+                                Toast.makeText(
+                                        activity,
+                                        "Sent", Toast.LENGTH_LONG
+                                ).show()
+                            }
+                        }
+                )
+        db.statsDao()
+                .erase()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe()
     }
 
     private fun createJsonRequestBody(vararg params: Pair<String, String>) =
@@ -122,6 +125,7 @@ class MainFragment @Singleton constructor(var db: AppDb) : Fragment() {
 
 
     private fun jsonStats(all: List<Stats>) {
+        var login = arguments?.getString("login")
         all.forEach { current ->
             createJsonRequestBody(
                     "activityID" to "0",
@@ -136,7 +140,7 @@ class MainFragment @Singleton constructor(var db: AppDb) : Fragment() {
                     "osversion" to osVersion.toString(),
                     "pid" to "string",  //
                     "start_time" to current.time_begin.toString(), //suffer
-                    "userID" to login.text.toString())
+                    "userID" to login!!)
         }
     }
 

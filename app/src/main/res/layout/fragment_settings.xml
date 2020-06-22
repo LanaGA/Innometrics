@@ -16,11 +16,11 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
         android:ems="10"
+        android:importantForAutofill="no"
         android:inputType="number"
         android:text="@string/default_value_sending"
         app:layout_constraintStart_toEndOf="@+id/textView6"
-        app:layout_constraintTop_toBottomOf="@+id/collecting_interval"
-        android:importantForAutofill="no" />
+        app:layout_constraintTop_toBottomOf="@+id/collecting_interval" />
 
     <EditText
         android:id="@+id/collecting_interval"
@@ -59,6 +59,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
     <TextView
+        android:visibility="gone"
         android:id="@+id/textLastSentInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -96,12 +97,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
         android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
         android:text="@string/save"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sending_interval" />
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/email_info"
@@ -114,6 +116,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
     <TextView
+        android:visibility="gone"
         android:id="@+id/last_sending"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -129,22 +132,22 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="20dp"
         android:text="Start"
         app:layout_constraintEnd_toStartOf="@+id/stopServiceButton"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/save_interval_button" />
+        app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
     <Button
         android:id="@+id/stopServiceButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="20dp"
         android:layout_marginEnd="20dp"
         android:text="Stop"
 
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/startServiceButton"
-        app:layout_constraintTop_toBottomOf="@+id/save_interval_button" />
+        app:layout_constraintTop_toBottomOf="@+id/sending_interval" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

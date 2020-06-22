@@ -15,5 +15,5 @@ data class Stats(
         @field:SerializedName("time_begin")
         val time_begin: Long,
         @field:SerializedName("time_end")
-        val time_end: Long?
+        val time_end: Long
 )

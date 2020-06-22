@@ -19,6 +19,7 @@ class SettingsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        email_info.text = arguments?.getString("login")
         startServiceButton.setOnClickListener {
             val startServiceIntent = Intent(
                     requireActivity(),
@@ -31,6 +32,8 @@ class SettingsFragment : Fragment() {
                     requireActivity(),
                     BackgroundService::class.java
             )
+            stopServiceIntent.putExtra("collecting_interval", collecting_interval.text)
+            stopServiceIntent.putExtra("sending_interval", sending_interval.text)
             activity?.stopService(stopServiceIntent)
         }
     }

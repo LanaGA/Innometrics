@@ -17,6 +17,7 @@ import java.util.*
 class ViewAdapter internal constructor() : RecyclerView.Adapter<ViewAdapter.ViewHolder>() {
     private var mAppStatsList: List<Stats> = emptyList()
     private lateinit var activity:FragmentActivity
+    private val mDateFormat = DateFormat.getDateTimeInstance()
 
     class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
         val appName: TextView = v.findViewById(R.id.textview_app_name)
@@ -32,10 +33,7 @@ class ViewAdapter internal constructor() : RecyclerView.Adapter<ViewAdapter.View
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         val (_, name, time_begin, time_end) = mAppStatsList[position]
-        val time = (time_end?.minus(time_begin) ?: 0) + 1
-        val seconds = (time / 1000).toInt() % 60
-        val minutes = (time / (1000 * 60)).toInt() % 60
-        val hours = (time / (1000 * 60 * 60)).toInt() % 24
+        val time = mDateFormat.format(Date(time_end))
         val label =
             activity.packageManager.getApplicationLabel(
                     activity.packageManager.getApplicationInfo(
@@ -48,7 +46,7 @@ class ViewAdapter internal constructor() : RecyclerView.Adapter<ViewAdapter.View
         }
         viewHolder.appName.text = label
         viewHolder.appIcon.setImageDrawable(icon)
-        viewHolder.lastTimeUsed.text = String.format("%02d hours %02d min %02d sec", hours, minutes, seconds)
+        viewHolder.lastTimeUsed.text = time
     }
 
     override fun getItemCount(): Int {

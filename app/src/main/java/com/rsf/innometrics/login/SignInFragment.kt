@@ -65,6 +65,7 @@ class SignInFragment : Fragment() {
 
                                 if (isOkResponseCode(response.code())) {
                                     val intent = Intent(activity, MainActivity::class.java).apply {}
+                                    intent.putExtra("login",login.text.toString())
                                     activity?.startActivity(intent)
                                 }
                             } else {
