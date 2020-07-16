@@ -1,5 +1,5 @@
 package com.rsf.innometrics.login
-
+/*
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -51,7 +51,7 @@ class SignUpFragment : Fragment() {
             }
 
             val credentials =
-                    jsonLogin(login.text.toString(), email.text.toString(), password.text.toString())
+                    jsonLogin(email.text.toString(), password.text.toString())
 
             restClient.getApiService(requireActivity().applicationContext).register(credentials)
                     .enqueue(
@@ -90,6 +90,7 @@ class SignUpFragment : Fragment() {
             )
 
 
-    private fun jsonLogin(username: String, email: String, password: String) =
-            createJsonRequestBody("username" to username, "email" to email, "password" to password)
+    private fun jsonLogin(email: String, password: String) =
+            createJsonRequestBody("email" to email, "password" to password)
 }
+*/

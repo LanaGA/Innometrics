@@ -6,24 +6,23 @@ import androidx.fragment.app.Fragment
 import com.rsf.innometrics.login.LoginActivity
 import com.rsf.innometrics.login.LoginCommunacator
 import com.rsf.innometrics.login.SignInFragment
-import com.rsf.innometrics.login.SignUpFragment
 import com.rsf.innometrics.R
 
-class MainLoginActivity : AppCompatActivity(), LoginCommunacator {
+class MainLoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_login)
 
-        val loginFragment = LoginActivity()
-        loginFragment.communicate = this
+        /*val loginFragment = LoginActivity()
+        loginFragment.communicate = this*/
 
         supportFragmentManager.beginTransaction()
-            .add(R.id.fragmentContainer, loginFragment)
+            .add(R.id.fragmentContainer, SignInFragment())
             .addToBackStack(null)
             .commit()
     }
 
-
+/*
     override fun loginButtonsHandler(buttonType: String) {
         val nextFragment: Fragment?
 
@@ -39,5 +38,5 @@ class MainLoginActivity : AppCompatActivity(), LoginCommunacator {
             .replace(R.id.fragmentContainer, nextFragment)
             .addToBackStack(null)
             .commit()
-    }
+    }*/
 }

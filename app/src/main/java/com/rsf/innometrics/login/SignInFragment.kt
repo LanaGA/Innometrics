@@ -43,9 +43,11 @@ class SignInFragment : Fragment() {
 
         signInButton.setOnClickListener {
             val credentials = jsonLogin(login.text.toString(), password.text.toString())
-
-            restClient.getApiService(requireActivity().applicationContext).login(credentials)
-                .enqueue(
+            restClient
+                    .getApiService(requireActivity()
+                    .applicationContext)
+                    .login(credentials)
+                    .enqueue(
                     object : Callback<LoginResponse> {
                         override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
                             Toast.makeText(
@@ -63,6 +65,7 @@ class SignInFragment : Fragment() {
 
                                 if (isOkResponseCode(response.code())) {
                                     val intent = Intent(activity, MainActivity::class.java).apply {}
+                                    intent.putExtra("login",login.text.toString())
                                     activity?.startActivity(intent)
                                 }
                             } else {
@@ -86,6 +89,6 @@ class SignInFragment : Fragment() {
         )
 
 
-    private fun jsonLogin(username: String, password: String) =
-        createJsonRequestBody("username" to username, "password" to password)
+    private fun jsonLogin(email: String, password: String) =
+        createJsonRequestBody("email" to email, "password" to password, "projectID" to "")
 }

@@ -8,11 +8,15 @@ import retrofit2.http.POST
 
 interface StatsService {
     @Headers("Content-Type: application/json")
-    @POST("users/login/")
+    @POST("/login")
     fun login(@Body credentials: RequestBody): Call<LoginResponse>
 
     @Headers("Content-Type: application/json")
-    @POST("users/")
-    fun register(@Body credentials: RequestBody): Call<RegistrationResponse>
+    @POST("/V1/activity")
+    fun addReport(@Body credentials: Unit): Call<RegistrationResponse>
+
+//    @Headers("Content-Type: application/json")
+//    @POST("/V1/Admin/User")
+//    fun register(@Body credentials: RequestBody): Call<RegistrationResponse>
 
 }
