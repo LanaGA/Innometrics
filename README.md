@@ -6,6 +6,6 @@ Supports logging in to the app, getting the necessary permissions, collecting in
 Technology used: Dagger 2, Retrofit, Room
 
 
-[![Demo](https://j.gifs.com/91wX0z.gif)]
+![Demo](https://j.gifs.com/91wX0z.gif)
 
 Because this project was created within the grant RSF and all information is sent to a private server, the username and password of one of the grant participants is used.
